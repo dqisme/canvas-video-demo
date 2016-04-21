@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Touch Video Demo for Daimler LSC</title>
+    <style>
+        @font-face {
+            font-family: CorporateACondensedRegular;
+            src: url(./fonts/corporateacon-reg-webfont.ttf);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            background-color: #000;
+        }
+
+        .canvas-video {
+            display: block;
+            width: 100%;
+        }
+
+        #logo {
+            height: 6rem;
+            margin: 2rem;
+            background-image: url(./images/benzlogo.png);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+        }
+
+        #description {
+            font-family: CorporateACondensedRegular;
+            color: #fff;
+            font-size: 1.5rem;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .blur {
+            -webkit-filter: blur(5px);
+            -moz-filter: blur(5px);
+            -o-filter: blur(5px);
+            -ms-filter: blur(5px);
+            filter: blur(5px);
+        }
+
+        @-webkit-keyframes blurOut {
+            from {
+                -webkit-filter: blur(2px);
+                -moz-filter: blur(2px);
+                -o-filter: blur(2px);
+                -ms-filter: blur(2px);
+                filter: blur(2px);
+            }
+            to {
+                -webkit-filter: blur(0px);
+                -moz-filter: blur(0px);
+                -o-filter: blur(0px);
+                -ms-filter: blur(0px);
+                filter: blur(0px);
+            }
+        }
+
+        @keyframes blurOut {
+            from {
+                -webkit-filter: blur(2px);
+                -moz-filter: blur(2px);
+                -o-filter: blur(2px);
+                -ms-filter: blur(2px);
+                filter: blur(2px);
+            }
+            to {
+                -webkit-filter: blur(0px);
+                -moz-filter: blur(0px);
+                -o-filter: blur(0px);
+                -ms-filter: blur(0px);
+                filter: blur(0px);
+            }
+        }
+
+        .blurOut {
+            -webkit-animation: blurOut 1s;
+            animation: blurOut 1s;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="logo"></div>
+    <video id="video1" src="./videos/benzvideo1.mp4"></video>
+    <canvas class="blur canvas-video" id="canvas1"></canvas>
+    <video id="video2" src="./videos/benzvideo2.mp4"></video>
+    <canvas class="blur canvas-video" id="canvas2"></canvas>
+    <div id="description">
+        Video From Mercedes-Benz
+    </div>
+    <script type="text/javascript" src="./scripts/jquery-1.12.3.min.js"></script>
+    <script type="text/javascript" src="./scripts/html-canvas-video-player.js"></script>
+    <script type="text/javascript" src="./scripts/hammer.min.js"></script>
+    <script type="text/javascript" src="./scripts/hammer-time.min.js"></script>
+    <script type="text/javascript" src="./scripts/jquery.hammer.js"></script>
+    <script type="text/javascript">
+        console.log("We got jQuery", $ === jQuery);
+        console.log("We got CanvasVideoPlayer", !!CanvasVideoPlayer);
+        console.log("We got HammerJS", !!Hammer);
+    </script>
+    <script type="text/javascript">
+        var canvasVideo1 = new CanvasVideoPlayer({
+            videoSelector: '#video1',
+            canvasSelector: '#canvas1',
+            hideVideo: true, // should script hide the video element
+            autoplay: false,
+            // IMPORTANT On iOS can't be used together with autoplay, autoplay will be disabled
+            audio: true, // can be true/false (it will use video file for audio), or selector for a separate audio file
+            resetOnLastFrame: true // should video reset back to the first frame after it finishes playing
+        });
+
+        document.querySelector("#canvas1").removeEventListener('click', cvpHandlers.canvasClickHandler);
+
+        var canvasVideo2 = new CanvasVideoPlayer({
+            videoSelector: '#video2',
+            canvasSelector: '#canvas2',
+            hideVideo: true, // should script hide the video element
+            autoplay: false,
+            // IMPORTANT On iOS can't be used together with autoplay, autoplay will be disabled
+            audio: true, // can be true/false (it will use video file for audio), or selector for a separate audio file
+            resetOnLastFrame: true // should video reset back to the first frame after it finishes playing
+        });
+
+
+        document.querySelector("#canvas2").removeEventListener('click', cvpHandlers.canvasClickHandler);
+
+        $("#canvas1").hammer().bind("press", function() {
+            $(this).removeClass('blur').addClass('blurOut');
+            canvasVideo1.play();
+        });
+
+        $("#canvas1").hammer().bind("pressup", function() {
+            canvasVideo1.pause();
+            $(this).removeClass('blurOut').addClass('blur');
+        });
+        $("#canvas2").hammer().bind("press", function() {
+            $(this).removeClass('blur').addClass('blurOut');
+            canvasVideo2.play();
+        });
+
+        $("#canvas2").hammer().bind("pressup", function() {
+            canvasVideo2.pause();
+            $(this).removeClass('blurOut').addClass('blur');
+        });
+    </script>
+</body>
+
+</html>
